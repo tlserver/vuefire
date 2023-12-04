@@ -229,8 +229,8 @@ describe(
 
       const a = await addDoc(listRef, { name: 'a' })
       expect(wrapper.vm.list).toHaveLength(1)
-      expect(data.value[0].id).toBeTypeOf('string')
-      expect(data.value[0].id).toEqual(a.id)
+      expect(data.value[0]['.id']).toBeTypeOf('string')
+      expect(data.value[0]['.id']).toEqual(a.id)
     })
 
     it('unbinds when the component is unbound', async () => {
@@ -472,13 +472,14 @@ describe(
 
       // Adds the id
       // FIXME: this one is any but the test passes
-      expectType<string>(useCollection(collection(db, 'todos')).value[0].id)
+      expectType<string>(useCollection(collection(db, 'todos')).value[0]['.id'])
       expectType<string>(
-        useCollection<TodoI>(collection(db, 'todos')).value[0].id
+        useCollection<TodoI>(collection(db, 'todos')).value[0]['.id']
       )
       expectType<string>(
-        useCollection<unknown>(collection(db, 'todos')).value[0].id
+        useCollection<unknown>(collection(db, 'todos')).value[0]['.id']
       )
+      // @ts-expect-error: no id with custom converter
       useCollection(
         collection(db, 'todos').withConverter<TodoI, DocumentData>({
           fromFirestore: (snapshot) => {
@@ -487,18 +488,17 @@ describe(
           },
           toFirestore: (todo) => todo,
         })
-        // @ts-expect-error: no id with custom converter
-      ).value[0].id
+      ).value[0]['.id']
 
       expectType<Ref<TodoI[]>>(useCollection<TodoI>(collection(db, 'todos')))
       expectType<Ref<TodoI[]>>(
         useCollection<TodoI>(collection(db, 'todos')).data
       )
       expectType<string>(
-        useCollection<TodoI>(collection(db, 'todos')).value.at(0)!.id
+        useCollection<TodoI>(collection(db, 'todos')).value.at(0)!['.id']
       )
       expectType<string>(
-        useCollection<TodoI>(collection(db, 'todos')).data.value.at(0)!.id
+        useCollection<TodoI>(collection(db, 'todos')).data.value.at(0)!['.id']
       )
       // @ts-expect-error: wrong type
       expectType<Ref<string[]>>(useCollection<TodoI>(collection(db, 'todos')))
@@ -513,7 +513,7 @@ describe(
       expectType<Ref<number[]>>(useCollection(refWithConverter))
       expectType<Ref<number[]>>(useCollection(refWithConverter).data)
       // @ts-expect-error: no id with converter
-      expectType<Ref<number[]>>(useCollection(refWithConverter).data.value.id)
+      expectType<Ref<number[]>>(useCollection(refWithConverter).data.value['.id'])
       // @ts-expect-error
       expectType<Ref<string[]>>(useCollection(refWithConverter))
     })

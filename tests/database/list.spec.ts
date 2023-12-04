@@ -97,9 +97,9 @@ describe('Database lists', () => {
     await promise.value
 
     expect(wrapper.vm.list).toMatchObject([
-      { $value: 'a', id: expect.any(String) },
-      { $value: 'b', id: expect.any(String) },
-      { $value: 'c', id: expect.any(String) },
+      { $value: 'a', '.key': expect.any(String) },
+      { $value: 'b', '.key': expect.any(String) },
+      { $value: 'c', '.key': expect.any(String) },
     ])
   })
 
@@ -169,8 +169,8 @@ describe('Database lists', () => {
 
     const a = await push(listRef, { name: 'a' })
     expect(wrapper.vm.list).toHaveLength(1)
-    expect(data.value[0].id).toBeTypeOf('string')
-    expect(data.value[0].id).toEqual(a.key)
+    expect(data.value[0]['.key']).toBeTypeOf('string')
+    expect(data.value[0]['.key']).toEqual(a.key)
   })
 
   it('unbinds when the component is unmounted', async () => {
@@ -397,7 +397,7 @@ describe('Database lists', () => {
       useDatabaseList(databaseRef(db, 'todos'))
     )
     expectType<string | undefined>(
-      useDatabaseList(databaseRef(db, 'todos')).value?.[0]?.id
+      useDatabaseList(databaseRef(db, 'todos')).value?.[0]?.['.key']
     )
     expectType<Ref<VueDatabaseQueryData<number>>>(
       useDatabaseList<number>(databaseRef(db, 'todos'))

@@ -15,15 +15,21 @@ export function createRecordFromDatabaseSnapshot(
 
   const value: unknown = snapshot.val()
   return isObject(value)
-    ? (Object.defineProperty(value, 'id', {
-        // allow destructuring without interfering without using the `id` property
-        value: snapshot.key,
+    ? (Object.defineProperties(value, {
+        // allow destructuring without interfering without using the `.key` property
+        '.key': { value: snapshot.key },
+        '.priority': { value: snapshot.priority },
+        '.ref': { value: snapshot.ref },
+        '.size': { value: snapshot.size },
       }) as VueDatabaseDocumentData<unknown>)
     : {
         // if the value is a primitive we can just return a regular object, it's easier to debug
         // @ts-expect-error: $value doesn't exist
         $value: value,
-        id: snapshot.key,
+        '.key': snapshot.key,
+        '.priority': snapshot.priority,
+        '.ref': snapshot.ref,
+        '.size': snapshot.size,
       }
 }
 
@@ -43,7 +49,7 @@ export function indexForKey(
   key: string | null | number
 ): number {
   for (let i = 0; i < array.length; i++) {
-    if (array[i].id === key) return i
+    if (array[i]['.key'] === key) return i
   }
 
   return -1
@@ -58,9 +64,25 @@ export type VueDatabaseDocumentData<T = unknown> =
   | null
   | (T & {
       /**
-       * id of the document
+       * The key (last part of the path) of the location of this DataSnapshot.The last token in a Database location is
+       * considered its key. For example, "ada" is the key for the /users/ada/ node. Accessing the key on any
+       * DataSnapshot will return the key for the location that generated it. However, accessing the key on the root URL
+       * of a Database will return null.
        */
-      readonly id: string
+      readonly '.key': string
+      /**
+       * The priority value of the data in this DataSnapshot.Applications need not use priority but can order
+       * collections by ordinary properties.
+       */
+      readonly '.priority': string
+      /**
+       * The location of this document data.
+       */
+      readonly '.ref': string
+      /**
+       * The number of child properties of this document data.
+       */
+      readonly '.size': string
     })
 
 /**

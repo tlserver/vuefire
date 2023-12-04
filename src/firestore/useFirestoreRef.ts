@@ -229,7 +229,15 @@ export type VueFirestoreDocumentData<T = DocumentData> =
       /**
        * id of the document
        */
-      readonly id: string
+      readonly '.id': string
+      /**
+       * Metadata about the DocumentSnapshot, including information about its source and local modifications.
+       */
+      readonly '.metadata': string
+      /**
+       * The DocumentReference for the document
+       */
+      readonly '.ref': string
     })
 
 export type VueFirestoreQueryData<T = DocumentData> = Array<

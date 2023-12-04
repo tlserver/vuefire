@@ -120,8 +120,8 @@ describe('Firestore refs in documents', async () => {
     await promise.value
     // NOTE: why does toEqual fail here?
     expect(data.value).toMatchObject({
-      id: docRef.id,
-      a: { name: 'a', id: aRef.id },
+      '.id': docRef.id,
+      a: { name: 'a', '.id': aRef.id },
     })
   })
 

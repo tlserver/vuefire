@@ -140,7 +140,7 @@ describe(
       const { itemRef, data } = factory()
 
       await setDoc(itemRef, { name: 'a' })
-      expect(data.value!.id).toBe(itemRef.id)
+      expect(data.value!['.id']).toBe(itemRef.id)
     })
 
     it('sets pending while loading', async () => {
@@ -347,12 +347,13 @@ describe(
 
       // Adds the id
       // FIXME: this one is any but the test passes
-      expectType<string>(useDocument(doc(db, 'todos', '1')).value?.id)
-      expectType<string>(useDocument<TodoI>(doc(db, 'todos', '1')).value!.id)
+      expectType<string>(useDocument(doc(db, 'todos', '1')).value?.['.id'])
+      expectType<string>(useDocument<TodoI>(doc(db, 'todos', '1')).value!['.id'])
       expectType<_Nullable<TodoI>>(
         useDocument<TodoI>(doc(db, 'todos', '1')).value
       )
-      expectType<string>(useDocument<unknown>(doc(db, 'todos', '1')).value!.id)
+      expectType<string>(useDocument<unknown>(doc(db, 'todos', '1')).value!['.id'])
+      // @ts-expect-error: no id with custom converter
       useDocument(
         doc(db, 'todos').withConverter<TodoI, DocumentData>({
           fromFirestore: (snapshot) => {
@@ -361,8 +362,7 @@ describe(
           },
           toFirestore: (todo) => todo,
         })
-        // @ts-expect-error: no id with custom converter
-      ).value?.id
+      ).value?.['.id']
 
       expectType<Ref<number | null | undefined>>(useDocument<number>(itemRef))
       expectType<Ref<number | null | undefined>>(
@@ -386,7 +386,7 @@ describe(
       // @ts-expect-error: string is not assignable to number
       expectType<Ref<string>>(useDocument(refWithConverter))
       // @ts-expect-error: no id when a custom converter is used
-      useDocument(refWithConverter).value.id
+      useDocument(refWithConverter).value['.id']
 
       // destructuring
       expectType<Ref<DocumentData | null | undefined>>(

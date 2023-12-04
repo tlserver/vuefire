@@ -147,7 +147,7 @@ describe('Database objects', () => {
 
     expect(wrapper.vm.item).toMatchObject({
       $value: 24,
-      id: itemRef.key,
+      '.key': itemRef.key,
     })
   })
 
@@ -294,7 +294,7 @@ describe('Database objects', () => {
       useDatabaseObject<{ name: string }>(databaseRef(db, 'todo'))
     )
     expectType<undefined | string>(
-      useDatabaseObject(databaseRef(db, 'todo')).value?.id
+      useDatabaseObject(databaseRef(db, 'todo')).value?.['.key']
     )
     expectType<Ref<number | null | undefined>>(
       useDatabaseObject<number>(databaseRef(db, 'todo'))

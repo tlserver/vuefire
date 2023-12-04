@@ -30,12 +30,12 @@ describe('Firestore and Database utils', () => {
 
   it('createSnapshot adds an id', async () => {
     const snapshot = await addDocToCollection()
-    expect(snapshot.data()?.id).not.toBeFalsy()
+    expect(snapshot.data()?.['.id']).not.toBeFalsy()
   })
 
   it('id is not enumerable', async () => {
     const snapshot = await addDocToCollection()
-    expect(Object.keys(snapshot.data() ?? {}).includes('id')).toBe(false)
+    expect(Object.keys(snapshot.data() ?? {}).includes('.id')).toBe(false)
   })
 
   it('contains all the data', async () => {
